@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau Client</title>
+    <link rel="stylesheet" href="./css/rekonektSuivi.css">
+    <!-- cdn et jquery -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="./js/rekonektSuivi.js" defer></script>
+    <link rel="stylesheet" href="./css/nouveauClient.css">
+    <script src="./js/nouveauClient.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav class="menu">
+            <div class="navbar-logo">
+                <a href="rekonektSuivi.html"><img src="./images/logo.png" alt="Logo"></a>
+            </div>
+            <ul class="menu-links">
+                <li><a href="nouveauClient.html">Nouvelle prise en charge</a></li> 
+                <li><a href="reparationsEnCours.html">Réparations en Cours</a></li>
+                <li><a href="reparationsEnAttentes.html">Réparations en Attentes</a></li>
+                <li><a href="reparationsTerminees.html">Réparations Terminées</a></li>
+                <li><a href="historique.html">Historique</a></li>
+            </ul>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Rechercher un client..."><span class="search-icon">&#128269;</span>
+            </div>
+        </nav>
+    </header>
+    <p><br></p>
+
+    <!-- <div class="container"> -->
+         <button id="generatePdf">
+            <i class='bx bxs-file-pdf'></i>
+          </button>  
+
+          <img id="logo2" src="./images/logo2.png" style="display:none;">
+
+        <section class="forms-section">
+            <h2 class="section-title">Informations Client et Appareil </h2>
+            <div class="forms" >
+              <div class="form-wrapper is-active">
+                <button type="button" class="switcher switcher-login">
+                  Client
+                  <span class="underline"></span>
+                </button>
+                <form class="form form-login" id="clientForm">
+                  <fieldset>
+                    <legend>Please, enter your email and password for login.</legend>
+                    <div class="input-block">
+                       
+                        <input type="hidden" id="clientID" name="clientID"/>
+                      <div class="civilite">
+                           
+                            <label class="boxcil" for="genreFem">Mme</label>
+                            <input type="radio" value="Mme" id="genreFem" name="civilite"/>
+                            <label class="boxcil" for="genreMas">M.</label> 
+                            <input type="radio" value="M." id="genreMas" name="civilite"/><br>
+                        </div>    
+                        
+                      <label for="leNom">Nom </label><br>
+                      <input id="leNom" type="name" name="leNom" required>
+                      <label for="lePrenom">Prénom</label>
+                      <input type="text" id="lePrenom" name="lePrenom" required/>
+                      <label for="idInscription">Identifiant Client</label>
+                    <input type="text" id="idInscription" name="idInscription"  />
+                      <label for="numTel">Numéro de Téléphone</label>
+                     <input type="text" id="numTel" name="numTel"/>
+
+                     <label for="email">Adresse email</label>
+                     <input type="email" id="email" name="email" placeholder="adresse@email.com" size="30" required>
+                    </div>
+                    <div class="input-block">
+                        
+                        <label for="noteClient">Commentaire Client</label>
+                        <input type="text" id="noteClient" name="noteClient"/>
+                        <label for="noteInterne">Note Interne</label>
+                   <input type="text" id="noteInterne" name="noteInterne" />
+                    </div>
+                  </fieldset>
+                  
+                  <button type="submit" id="validerClient" class="btn-login">Valider</button>
+                </form>
+              </div>
+              <div class="form-wrapper">
+                <button type="button" class="switcher switcher-signup">
+                  Appareil
+                  <span class="underline"></span>
+                </button>
+                <form class="form form-signup" id="formulaire" >
+                  <fieldset>
+                    <legend>Please, enter your email, password and password confirmation for sign up.</legend>
+                    <div class="input-block">
+                        <div class="input-block">
+                            <label for="num_suivi">Numéro de Suivi</label>
+                            <input type="text" id="num_suivi" name="num_suivi" readonly />
+
+                            <div class="input-block">
+                        
+                                <label for="letype">Type</label>
+                                <select id="letype"class="mySelect" name="letype">
+                                    <option value=""></option>
+                                    <option value="smartphone">Smartphone</option>
+                                    <option value="tablet">Tablette</option>
+                                    <option value="laptop">Ordinateur</option>
+                                    <option value="console">Console</option>
+                                </select>
+                           
+                        </div>
+                            <div class="input-block">
+                                        <label for="lamarque">Marque</label>
+                            <select class="mySelect" id="lamarque" name="lamarque" onchange="checkCustomInput('marque')">
+                                <option value=""></option>
+                                <option value="apple">Apple</option>
+                                <option value="samsung">Samsung</option>
+                                <option value="oppo">Oppo</option>
+                                <option value="huawei">Huawei</option>
+                                <option value="xiaomi">Xiaomi</option>
+                                <option value="google-pixel">Google Pixel</option>
+                                <option value="pocophone">Pocophone</option>
+                                <option value="oneplus">OnePlus</option>
+                                <option value="realme">Realme</option>
+                                <option value="sony">Sony</option>
+                                <option value="motorola">Motorola</option>
+                                <option value="asus">Asus</option>
+                                <option value="vivo">Vivo</option>
+                                <option value="wiko">Wiko</option>
+                                <option value="crosscall">Crosscall</option>
+                                <option value="blackview">BlackView</option>
+                                <option value="blackberry">Blackberry</option>
+                                
+                                <!-- Ordinateurs -->
+                                <option value="mac">Mac</option>
+                                <option value="surface">Surface</option>
+                                
+                                <!-- Tablettes -->
+                                <option value="ipad">iPad</option>
+                                <option value="samsung-tab">Samsung Tab</option>
+                                <option value="huawei-tab">Huawei</option>
+                                <option value="surface-tab">Surface</option>
+                                <option value="asus-tab">Asus</option>
+                                
+                                <!-- Consoles de jeux -->
+                                <option value="nintendo">Nintendo</option>
+                                <option value="playstation">Playstation</option>
+                                <option value="xbox">Xbox</option>
+                            </select>
+                            <input type="text" id="customMarque" name="customMarque" placeholder="Entrez une autre marque" style="display:none;">
+                                </div>
+                            <div class="input-block">
+                                <label for="lemodele">Modèle</label>
+                                <select id="lemodele" class="mySelect" name="lemodele" onchange="checkCustomInput('modele')">
+                                    <option value=""></option>
+                                    <option value="apple">iPhone </option>
+                                    <option value="apple">iPhone 13</option>
+                                    <option value="apple">iPhone 14 Pro</option>
+                                    <option value="apple">iPhone 12</option>
+                                    <option value="apple">iPhone 11</option>
+                                    <option value="samsung">Galaxy S</option>
+                                    <option value="samsung">Galaxy A</option>
+                                    <option value="samsung">Galaxy Z</option>
+                                    <option value="oppo">Find X5 Pro</option>
+                                    <option value="oppo">Reno 8</option>
+                                    <option value="oppo">A54</option>
+                                    <option value="huawei">P50 Pro</option>
+                                    <option value="huawei">Mate 40</option>
+                                    <option value="huawei">Nova 9</option>
+                                    <option value="xiaomi">Mi 11</option>
+                                    <option value="xiaomi">Redmi Note 11</option>
+                                    <option value="xiaomi">Poco F4</option>
+                                    <option value="google-pixel">Pixel 7</option>
+                                    <option value="google-pixel">Pixel 6a</option>
+                                    <option value="google-pixel">Pixel 5</option>
+                                    <option value="pocophone">Poco X3 Pro</option>
+                                    <option value="pocophone">Poco F3</option>
+                                    <option value="pocophone">Poco M4 Pro</option>
+                                    <option value="oneplus">OnePlus 10 Pro</option>
+                                    <option value="oneplus">OnePlus Nord 2</option>
+                                    <option value="oneplus">OnePlus 9</option>
+                                    <option value="realme">GT 2 Pro</option>
+                                    <option value="realme">Narzo 50</option>
+                                    <option value="realme">C35</option>
+                                    <option value="sony">Xperia 1 IV</option>
+                                    <option value="sony">Xperia 10 III</option>
+                                    <option value="sony">Xperia 5 II</option>
+                                    <option value="motorola">Moto G Power</option>
+                                    <option value="motorola">Moto Edge 30</option>
+                                    <option value="motorola">Moto Razr 5G</option>
+                                    <option value="asus">ROG Phone 6</option>
+                                    <option value="asus">Zenfone 8</option>
+                                    <option value="asus">ROG Phone 5</option>
+                                    <option value="vivo">X80 Pro</option>
+                                    <option value="vivo">V23 5G</option>
+                                    <option value="vivo">Y21</option>
+                                    <option value="wiko">Power U30</option>
+                                    <option value="wiko">Y81</option>
+                                    <option value="wiko">View 5 Plus</option>
+                                    <option value="crosscall">Core-X4</option>
+                                    <option value="crosscall">Trekker-X4</option>
+                                    <option value="crosscall">Action-X3</option>
+                                    <option value="blackview">BV9900</option>
+                                    <option value="blackview">A80 Pro</option>
+                                    <option value="blackview">BV6300</option>
+                                    <option value="blackberry">Key2</option>
+                                    <option value="blackberry">KeyOne</option>
+                                    <option value="blackberry">Passport</option>
+                                    
+                                    <!-- Ordinateurs -->
+                                    <option value="mac">MacBook Pro</option>
+                                    <option value="mac">MacBook Air</option>
+                                    <option value="mac">iMac</option>
+                                    <option value="surface">Surface Pro 9</option>
+                                    <option value="surface">Surface Laptop 4</option>
+                                    <option value="surface">Surface Go 3</option>
+                                    
+                                    <!-- Tablettes -->
+                                    <option value="ipad">iPad Pro</option>
+                                    <option value="ipad">iPad Air</option>
+                                    <option value="ipad">iPad Mini</option>
+                                    <option value="samsung-tab">Galaxy Tab S8</option>
+                                    <option value="samsung-tab">Galaxy Tab A7</option>
+                                    <option value="samsung-tab">Galaxy Tab S6 Lite</option>
+                                    <option value="huawei-tab">MatePad Pro</option>
+                                    <option value="huawei-tab">MediaPad T5</option>
+                                    <option value="huawei-tab">MatePad 11</option>
+                                    <option value="surface-tab">Surface Pro 8</option>
+                                    <option value="surface-tab">Surface Go 2</option>
+                                    <option value="surface-tab">Surface Pro X</option>
+                                    <option value="asus-tab">ZenPad 3S</option>
+                                    <option value="asus-tab">Transformer Mini</option>
+                                    <option value="asus-tab">ZenPad 10</option>
+                                    
+                                    <!-- Consoles de jeux -->
+                                    <option value="nintendo">Switch OLED</option>
+                                    <option value="nintendo">Switch Lite</option>
+                                    <option value="nintendo">Wii U</option>
+                                    <option value="playstation">PS5</option>
+                                    <option value="playstation">PS4 Pro</option>
+                                    <option value="playstation">PS Vita</option>
+                                    <option value="xbox">Series X</option>
+                                    <option value="xbox">Series S</option>
+                                    <option value="xbox">Xbox One X</option>
+                                    <option value="other">Autre...</option>
+                                </select>
+                                <input type="text" id="customModele" name="customModele" placeholder="Entrez un autre modèle" style="display:none;">
+                            </div>
+                            <div class="input-block">
+                                <label for="letat">État</label>
+                                <input type="text" id="letat" name="letat"/>
+                            </div>
+                            <div class="input-block">
+                                <label for="serie_imei">N° SERIE / IMEI : </label>
+                                <input type="text" id="serie_imei" name="serie_imei"/>
+                            </div>
+                            <div class="input-block">
+                                <label for="nomUt">Nom d'Utilisateur</label>
+                                <input type="text" id="nomUt" name="nomUt"/>
+                            </div>
+                            <div class="input-block">
+                                <label for="mtp">Mot de Passe</label>
+                                <input type="text" id="mtp" name="mtp"/>
+                            </div>
+                            <div class="input-block">
+                                <label for="consta">Panne Constatée</label>
+                                <input type="text" id="consta" name="consta">
+                            </div>
+                            <div class="input-block">
+                                <label for="Proposition">Réparation Proposée</label>
+                                <input type="text" id="Proposition" name="Proposition">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="input-block">
+                        <label for="prix">Prix</label>
+                        <input type="number" id="prix" name="prix" step="0.01">
+                        <label for="acompte">Acompte</label>
+                        <input type="number" id="acompte" name="acompte" step="0.01">
+                        <div class="check">
+                            <label for="accord">Accord Client</label>
+                            <input type="radio" value="oui" id="accordOui" name="accord"/><label class="boxcil" for="accordOui">OUI</label>
+                            <input type="radio" value="non" id="accordNon" name="accord"/><label class="boxcil" for="accordNon">NON</label>
+                        </div>
+                    </div>
+                  </fieldset>
+                 
+                  <button type="submit" id="validerAppareil" class="btn-signup">Valider</button>
+                </form>
+              </div>
+            </div>
+          </section>
+     </div>   
+     <canvas id="barcodeCanvas" style="display:none;"></canvas>
+
+     <script>
+        const switchers = [...document.querySelectorAll('.switcher')]
+
+switchers.forEach(item => {
+	item.addEventListener('click', function() {
+		switchers.forEach(item => item.parentElement.classList.remove('is-active'))
+		this.parentElement.classList.add('is-active')
+	})
+})
+
+
+</script>
+
+</body>
+</html>
