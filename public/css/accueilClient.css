@@ -7,8 +7,8 @@
     box-sizing: border-box;
 }
 body{
-	margin: 0;
-	padding: 0;
+    margin: 0 auto;
+    padding: 0 auto;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -129,3 +129,36 @@ button{
 .social i{
   margin-right: 4px;
 }
+
+@media only screen and (max-width: 767px) {
+    form {
+        width: 90%;  /* Utilisation de pourcentages pour l'adaptation */
+        height: auto;
+        padding: 20px;
+    }
+
+    .background {
+        display: none; /* Supprimer les décorations encombrantes sur mobile */
+    }
+
+    input {
+        height: 40px; /* Réduction de la taille des champs d’entrée */
+        font-size: 14px;
+    }
+
+    button {
+        padding: 10px 0;
+        font-size: 16px;
+    }
+
+    .social {
+        flex-direction: column; /* Réorganisation en colonne */
+        align-items: center;
+    }
+
+    .social div {
+        width: 100%;  /* Pleine largeur sur mobile */
+        margin-bottom: 10px;
+    }
+}
+
