@@ -1,3 +1,5 @@
+
+
 $(document).ready(function () {
     function genererNumeroSuivi() {
         const date = new Date();
@@ -88,3 +90,13 @@ if (element) {
 } else {
     console.error('Élément non trouvé : #validerBtn');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburger');
+    const menuLinks = document.getElementById('menuLinks');
+
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        menuLinks.classList.toggle('active');
+    });
+});
