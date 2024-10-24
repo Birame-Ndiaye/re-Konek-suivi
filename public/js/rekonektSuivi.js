@@ -1,6 +1,5 @@
-
-
 $(document).ready(function () {
+    // Génération du numéro de suivi
     function genererNumeroSuivi() {
         const date = new Date();
         const timestamp = date.getTime();
@@ -8,13 +7,16 @@ $(document).ready(function () {
         return timestamp.toString() + random.toString();
     }
 
+    // Génération de l'ID client
     function genererIdentifiantClient(nom, prenom) {
         const random = Math.floor(Math.random() * 1000);
         return prenom.substring(0, 3).toUpperCase() + nom.substring(0, 3).toUpperCase() + random;
     }
 
+    // Assigner le numéro de suivi au chargement de la page
     $('#num_suivi').val(genererNumeroSuivi());
 
+    // Générer l'identifiant client sur la saisie du nom et prénom
     $('#leNom, #lePrenom').on('input', function () {
         const nom = $('#leNom').val();
         const prenom = $('#lePrenom').val();
@@ -24,7 +26,8 @@ $(document).ready(function () {
         }
     });
 
-  $('#validerBtn').click(function (e) {
+    // Gestion de la soumission du formulaire
+    $('#validerBtn').click(function (e) {
         e.preventDefault();
 
         const appareilForm = $('#formulaire').serializeArray();
@@ -41,8 +44,6 @@ $(document).ready(function () {
 
         console.log('Sending data:', formData);
 
-
-        
         // Envoyer les données au serveur
         $.ajax({
             url: 'http://localhost:8081/addClient',
@@ -64,39 +65,10 @@ $(document).ready(function () {
             }
         });
     });
+
+    // Gestion du menu burger (un seul bouton)
+   // Gestion du menu burger
+   $('#burgerMenu').click(function () {
+    $('#menuLinks').toggleClass('active');
 });
-
-const element = document.querySelector('validerBtn');
-if (element) {
-    element.addEventListener('click', function() {
-        // Votre code ici
-        document.getElementById('validerBtn').addEventListener('click', function() {
-            // Récupérer les valeurs des champs
-            const numSuivi = document.getElementById('num_suivi').value;
-            const nom = document.getElementById('leNom').value;
-            const idClient = document.getElementById('idInscription').value;
-            const email = document.getElementById('email').value;
-        
-            // Stocker les informations dans localStorage
-            localStorage.setItem('numSuivi', numSuivi);
-            localStorage.setItem('nom', nom);
-            localStorage.setItem('idClient', idClient);
-            localStorage.setItem('email', email);
-        
-            // Redirection vers la page de suivi
-            window.location.href = 'accueilClient.html';
-        });
-    });
-} else {
-    console.error('Élément non trouvé : #validerBtn');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const hamburger = document.getElementById('hamburger');
-    const menuLinks = document.getElementById('menuLinks');
-
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        menuLinks.classList.toggle('active');
-    });
 });

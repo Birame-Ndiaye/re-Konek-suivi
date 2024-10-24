@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil</title>
     <link rel="stylesheet" href="./css/rekonektSuivi.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="./js/rekonektSuivi.js" defer></script>
+    
+   
+   
 </head>
 <body>
     <header>
@@ -14,13 +15,12 @@
             <div class="navbar-logo">
                 <a href="#"><img src="./images/logo.png" alt="Logo"></a>
             </div>
-
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
+        
+            <!-- Bouton burger pour les petits écrans -->
+            <div class="burger-menu" id="burgerMenu">
+                &#9776; <!-- Code pour l'icône burger -->
             </div>
-
+        
             <ul class="menu-links" id="menuLinks">
                 <li><a href="nouveauClient.html">Prise en charge</a></li>
                 <li><a href="reparationsEnCours.html">Réparations en Cours</a></li>
@@ -29,14 +29,15 @@
                 <li><a href="historique.html">Historique</a></li>
                 <li><a href="index.html">Client</a></li>
             </ul>
-
+        
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Rechercher un client...">
                 <span class="search-icon">&#128269;</span>
             </div>
         </nav>
+        
     </header>
-
+    
     <div class="container">
         <form>
             <h2>Réparations En Cours</h2>
@@ -63,5 +64,10 @@
     <footer>
         <p>&copy; 2024 Re-KonektSuivi</p>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Charger ton script JS après jQuery -->
+    <script src="./js/rekonektSuivi.js"></script>
 </body>
 </html>

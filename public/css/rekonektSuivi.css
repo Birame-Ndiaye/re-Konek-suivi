@@ -23,6 +23,13 @@ header {
   color: white;
 }
 
+.burger-menu {
+  display: none; /* Par défaut, caché sur les grands écrans */
+  font-size: 30px;
+  cursor: pointer;
+  color: white;
+}
+
 .navbar-logo img {
   height: 55px;
 }
@@ -47,6 +54,7 @@ header {
 .menu-links li a:hover {
   background-color: #282c34;
 }
+
 
 .search-container {
   position: relative;
@@ -114,4 +122,104 @@ footer {
 h2 {
   text-align: center;
 
+}
+
+/* Styles pour les petits écrans (mobiles) */
+@media only screen and (max-width: 600px) {
+ 
+  .burger-menu {
+    display: block; /* Le bouton burger apparaît sur les petits écrans */
+  }
+
+  .menu-links {
+    display: none; /* Cache les liens du menu au départ */
+    flex-direction: column;
+    position: absolute;
+    top: 60px; /* Juste en dessous du menu */
+    right: 0;
+    background-color: #000000;
+    width: 100%;
+    padding: 10px;
+    z-index: 1000;
+  }
+
+  .menu-links li {
+    margin: 10px 0;
+  }
+
+  .menu-links li a {
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+
+  .menu.active .menu-links {
+    display: flex; /* Affiche les liens lorsque le menu est activé */
+  }
+  /* .search-container {
+    width: 100%;
+  } */
+ 
+  #searchInput {
+   
+    display: none;
+  }
+  .search-icon {
+    display: none;
+  }
+  
+
+  .container {
+    flex-direction: column; /* Les formulaires s'afficheront les uns en dessous des autres */
+    width: 100%;
+    padding: 20px;
+  }
+
+  form {
+    max-width: 100%; /* Les formulaires prendront toute la largeur */
+  }
+
+  .imgRep {
+    max-width: 100%; /* Les images prendront toute la largeur disponible */
+  }
+}
+
+/* Styles pour les tablettes */
+@media only screen and (min-width: 601px) and (max-width: 1024px) {
+  .menu-links {
+    gap: 10px;
+  }
+
+  .container {
+    flex-direction: column;
+    padding: 40px;
+  }
+
+  form {
+    max-width: 80%; /* Ajuste la largeur des formulaires */
+    margin: 0 auto; /* Centrer les formulaires */
+  }
+
+  .imgRep {
+    max-width: 100%;
+  }
+}
+
+/* Styles pour les grands écrans (ordinateurs) */
+@media only screen and (min-width: 1025px) {
+  .container {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    padding: 50px;
+  }
+
+  form {
+    max-width: 48%;
+  }
+
+  .imgRep {
+    max-width: 100%;
+  }
 }
