@@ -12,10 +12,10 @@ app.use(bodyParser.json());
 
 // Configurer la connexion MySQL
 const db = mysql.createConnection({
-  host: "localhost",
+  host: "0.0.0.0",
   user: "root", // Remplacez par votre utilisateur MySQL
-  password: "", // Remplacez par votre mot de passe MySQL
-  database: "bddrekonekt", // Nom de la base de données créée
+  password: "ziUCvbxzasOPHGzUVVRnyQBTYQXWgbYG", // Remplacez par votre mot de passe MySQL
+  database: "railway", // Nom de la base de données créée
 });
 
 // Connexion à MySQL
@@ -381,7 +381,10 @@ app.get('/repairList/:clientId', (req, res) => {
 // });
 
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Use PORT provided in environment or default to 3000
+const port = process.env.PORT || 3000;
+
+// Listen on port and 0.0.0.0
+app.listen(port, "0.0.0.0", function () {
+  // ...
 });
