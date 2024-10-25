@@ -6,7 +6,7 @@
     "express-validator": "^7.2.0",
     "mysql2": "^3.11.0"
   },
-  "name": "sitedesuivirekonekt",
+  "name": "re-konek-suivi",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {

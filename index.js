@@ -1,8 +1,6 @@
 require('dotenv').config();
-const express = require("express");
-const mysql = require("mysql2");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+const express = require('express');
+const mysql = require('mysql'); // Une seule déclaration de mysql
 const app = express();
 
 // Configurer CORS
@@ -11,8 +9,7 @@ app.use(cors());
 // Configurer l'application pour utiliser body-parser pour les requêtes JSON
 app.use(bodyParser.json());
 
-// Configurer la connexion MySQL
-const mysql = require('mysql');
+
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -391,7 +388,16 @@ app.get('/repairList/:clientId', (req, res) => {
 // app.listen(port, "0.0.0.0", function () {
 //   // ...
 
+// Connexion à la base de données
+db.connect((err) => {
+  if (err) {
+    console.error('Erreur de connexion à la base de données:', err);
+    return;
+  }
+  console.log('Connecté à la base de données MySQL');
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Serveur démarré sur le port ${port}`);
 });
