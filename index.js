@@ -389,15 +389,25 @@ app.get('/repairList/:clientId', (req, res) => {
 //   // ...
 
 // Connexion à la base de données
-db.connect((err) => {
-  if (err) {
-    console.error('Erreur de connexion à la base de données:', err);
-    return;
-  }
-  console.log('Connecté à la base de données MySQL');
+
+// Route de test
+app.get('/', (req, res) => {
+  res.send('Application en ligne !');
 });
 
+// Gestion des erreurs
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Erreur serveur !');
+});
+
+// Démarrage du serveur
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Serveur démarré sur le port ${port}`);
+});
+
+// Gestion des erreurs non capturées
+process.on('uncaughtException', (err) => {
+  console.error('Erreur non capturée:', err);
 });
