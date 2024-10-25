@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
@@ -11,11 +12,13 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Configurer la connexion MySQL
-const db = mysql.createConnection({
-  host: "0.0.0.0",
-  user: "root", // Remplacez par votre utilisateur MySQL
-  password: "ziUCvbxzasOPHGzUVVRnyQBTYQXWgbYG", // Remplacez par votre mot de passe MySQL
-  database: "railway", // Nom de la base de données créée
+const mysql = require('mysql');
+
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
 });
 
 // Connexion à MySQL
@@ -382,9 +385,13 @@ app.get('/repairList/:clientId', (req, res) => {
 
 
 // Use PORT provided in environment or default to 3000
-const port = process.env.PORT || 3000;
+// const port = process.env.PORT || 3000;
 
-// Listen on port and 0.0.0.0
-app.listen(port, "0.0.0.0", function () {
-  // ...
+// // Listen on port and 0.0.0.0
+// app.listen(port, "0.0.0.0", function () {
+//   // ...
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
