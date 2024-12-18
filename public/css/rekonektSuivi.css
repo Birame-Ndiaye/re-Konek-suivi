@@ -1,5 +1,4 @@
 body {
-  /* background: url('../Image/fondEcran.jpg') no-repeat center center fixed; */
   background-size: cover;
   font-family: 'Helvetica';
   margin: 0;
@@ -18,13 +17,13 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #000000 ; 
+  background-color: #000000;
   padding: 10px 20px;
   color: white;
 }
 
 .burger-menu {
-  display: none; /* Par défaut, caché sur les grands écrans */
+  display: none;
   font-size: 30px;
   cursor: pointer;
   color: white;
@@ -80,8 +79,8 @@ header {
 
 /* Container Styles */
 .container {
-  padding-top: 70px; /* To prevent content from being hidden under the fixed menu */
-  background-color: rgba(255, 255, 255, 0.8); /* Fond semi-transparent */
+  padding-top: 70px;
+  background-color: rgba(255, 255, 255, 0.8);
   padding: 57px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -89,13 +88,12 @@ header {
   width: 90%;
   display: flex;
   justify-content: space-between;
-  gap: 20px; /* Espace entre les sections */
+  gap: 20px;
 }
 
-/* Additional Styles for Forms and Footer */
 form {
-  flex: 1; /* Les formulaires prendront une largeur égale */
-  max-width: 48%; /* Limite la largeur des formulaires pour éviter qu'ils ne se chevauchent */
+  flex: 1;
+  max-width: 48%;
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 25px;
@@ -114,7 +112,7 @@ footer {
 }
 
 .imgRep {
-  max-width: 100%; /* L'image ne sera jamais plus large que son conteneur */
+  max-width: 100%;
   height: auto;
   margin-top: 10px;
 }
@@ -126,16 +124,16 @@ h2 {
 
 /* Styles pour les petits écrans (mobiles) */
 @media only screen and (max-width: 600px) {
- 
+
   .burger-menu {
-    display: block; /* Le bouton burger apparaît sur les petits écrans */
+    display: block;
   }
 
   .menu-links {
-    display: none; /* Cache les liens du menu au départ */
+    display: none;
     flex-direction: column;
     position: absolute;
-    top: 60px; /* Juste en dessous du menu */
+    top: 60px;
     right: 0;
     background-color: #000000;
     width: 100%;
@@ -155,34 +153,40 @@ h2 {
   }
 
   .menu.active .menu-links {
-    display: flex; /* Affiche les liens lorsque le menu est activé */
+    display: flex;
   }
-  /* .search-container {
-    width: 100%;
-  } */
- 
+
   #searchInput {
-   
+
     display: none;
   }
+
   .search-icon {
     display: none;
   }
-  
+
 
   .container {
-    flex-direction: column; /* Les formulaires s'afficheront les uns en dessous des autres */
+    flex-direction: column;
     width: 100%;
     padding: 20px;
   }
 
   form {
-    max-width: 100%; /* Les formulaires prendront toute la largeur */
+    max-width: 100%;
   }
 
   .imgRep {
-    max-width: 100%; /* Les images prendront toute la largeur disponible */
+    max-width: 100%;
   }
+}
+
+.hover-anim {
+  transition: transform 0.3s ease;
+}
+
+.hover-anim:hover {
+  transform: scale(1.1);
 }
 
 /* Styles pour les tablettes */
@@ -197,8 +201,8 @@ h2 {
   }
 
   form {
-    max-width: 80%; /* Ajuste la largeur des formulaires */
-    margin: 0 auto; /* Centrer les formulaires */
+    max-width: 80%;
+    margin: 0 auto;
   }
 
   .imgRep {

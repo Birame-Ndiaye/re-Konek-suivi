@@ -1,5 +1,4 @@
 body {
-  /* background: url('../Image/fondEcran.jpg') no-repeat center center fixed; */
   background-size: cover;
   font-family: 'Helvetica';
   margin: 0;
@@ -19,7 +18,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #000000 ; 
+  background-color: #000000;
   padding: 10px 20px;
   color: white;
 }
@@ -84,7 +83,8 @@ table thead {
   color: white;
 }
 
-table th, table td {
+table th,
+table td {
   border: 1px solid #140f0f;
   padding: 8px;
   text-align: center;
@@ -107,5 +107,3 @@ footer {
   bottom: 0;
   width: 100%;
 }
-
-

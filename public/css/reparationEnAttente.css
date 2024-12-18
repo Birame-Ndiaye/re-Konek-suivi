@@ -1,22 +1,20 @@
 /* Styles généraux */
 body {
     font-family: 'Arial', sans-serif;
-    background:  #FEFEFF;
+    background: #FEFEFF;
     background-size: cover;
     margin: 0;
     padding: 0;
 }
 
-/* Styles pour le contenu principal */
 main {
-    padding-top: 80px; /* Pour éviter le chevauchement avec le header fixe */
-    padding-bottom: 60px; /* Pour éviter le chevauchement avec le footer fixe */
+    padding-top: 80px;
+    padding-bottom: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Styles pour le header et le menu */
 header {
     position: fixed;
     top: 0;
@@ -29,10 +27,10 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #000000 ; 
+    background-color: #000000;
     padding: 10px 20px;
     color: white;
-  }
+}
 
 .navbar-logo img {
     height: 55px;
@@ -82,7 +80,6 @@ header {
     cursor: pointer;
 }
 
-/* Styles pour le footer */
 footer {
     text-align: center;
     padding: 10px;
@@ -92,7 +89,7 @@ footer {
     bottom: 0;
     width: 100%;
 }
-/* Styles pour le conteneur de tickets */
+
 .grid-container {
     display: flex;
     flex-direction: column;
@@ -101,7 +98,6 @@ footer {
     margin: 0 auto;
 }
 
-/* Styles pour l'en-tête du tableau des tickets */
 .ticket-header {
     display: flex;
     justify-content: space-between;
@@ -122,7 +118,7 @@ footer {
     font-size: 14px;
 }
 
-/* Styles pour les tickets */
+
 .ticket {
     background-color: #fff;
     border: 1px solid #ddd;
@@ -164,27 +160,24 @@ section h2 {
 
 .reprendre-btn {
     padding: 5px 10px;
-    background-color: #448eea; /* Couleur verte */
+    background-color: #448eea;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 4px;
     font-size: 14px;
-  }
-  
-  .reprendre-btn:hover {
-    background-color: #448eea;
-  }
-  
+}
 
-/* Assurez-vous que les spans dans .ticket ont une largeur fixe pour un bon alignement */
+.reprendre-btn:hover {
+    background-color: #448eea;
+}
+
 .ticket span {
     flex: 1;
     text-align: center;
     font-size: 14px;
 }
 
-/* Pour le dernier span qui contient le bouton */
 .ticket span:last-child {
     display: flex;
     justify-content: center;

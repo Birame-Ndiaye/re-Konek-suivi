@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetch('http://localhost:3000/historiqueTickets')
+
+    const BACKEND_URL_HistoriqueL = 'http://localhost:3000/historiqueTickets';  
+
+    fetch(BACKEND_URL_HistoriqueL)
         .then(response => response.json())
         .then(tickets => {
             const tableBody = document.querySelector('#historiqueTable tbody');
@@ -7,15 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const row = document.createElement('tr');
                 const appareil = `${ticket.letype} ${ticket.lamarque} ${ticket.lemodele}`;
 
-        // Utiliser la date formatée
-        const dateDepot = ticket.date_depot || 'N/A';
-
+                const dateDepot = ticket.date_depot || 'N/A';
                 row.innerHTML = `
                     <td>${dateDepot}</td>
                     <td>${ticket.nom} ${ticket.prenom}</td>
                     <td>${appareil}</td>
                     <td>${ticket.num_suivi}</td>
-                    <td>${ticket.Proposition}</td>
+                    <td>${ticket.proposition}</td>
                     <td>${ticket.prix}€</td>
                 `;
                 tableBody.appendChild(row);

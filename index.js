@@ -1,91 +1,92 @@
 require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql'); // Une seule déclaration de mysql
+const { Pool } = require('pg');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const app = express();
 
-// Configurer CORS
+// Configure CORS
 app.use(cors());
 
-// Configurer l'application pour utiliser body-parser pour les requêtes JSON
+// Configure JSON
 app.use(bodyParser.json());
 
-
-
-const connection = mysql.createConnection({
+const pool = new Pool({
   host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  database: process.env.DB_DATABASE,
+  ssl: {
+    rejectUnauthorized: false,
+  }
 });
 
-// Connexion à MySQL
-db.connect((err) => {
+// connexion à la base de données
+pool.query('SELECT NOW()', (err, res) => {
   if (err) {
-    console.error("Erreur de connexion à MySQL :", err);
-    return;
+    console.error('Erreur de connexion :', err);
+  } else {
+    console.log('Connexion réussie :', res.rows);
   }
-  console.log("Connecté à MySQL");
 });
 
-// Route pour gérer l'ajout d'un appareil
-app.post("/nouvelAppareil", (req, res) => {
-  const appareilData = req.body;
+module.exports = pool;
 
-  // Vérifier que les données requises sont bien présentes
-  if (!appareilData.client_id || !appareilData.num_suivi || !appareilData.letype) {
-    return res.status(400).json({ error: "Données manquantes" });
-  }
+// Route pour gérer l'ajout d'un appareil (version async/await conservée)
+app.post("/nouvelAppareil", async (req, res) => {
+  try {
+    const appareilData = req.body;
 
-  // Gestion de la marque et du modèle personnalisés
-  const marque = appareilData.customMarque && appareilData.customMarque.trim() !== ""
-    ? appareilData.customMarque
-    : appareilData.lamarque;
+    // Vérifie que les données requises sont bien présentes
+    if (!appareilData.client_id || !appareilData.num_suivi || !appareilData.letype) {
+      return res.status(400).json({ error: "Données manquantes" });
+    }
 
-  const modele = appareilData.customModele && appareilData.customModele.trim() !== ""
-    ? appareilData.customModele
-    : appareilData.lemodele;
+    const marque = appareilData.customMarque && appareilData.customMarque.trim() !== ""
+      ? appareilData.customMarque
+      : appareilData.lamarque;
 
-  // Gestion de la date de dépôt
-  const dateDepot = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const modele = appareilData.customModele && appareilData.customModele.trim() !== ""
+      ? appareilData.customModele
+      : appareilData.lemodele;
 
-  // Insérer les données dans la base de données
-  const sql = `
-    INSERT INTO appareils (num_suivi, letype, lamarque, lemodele, letat, serie_imei, nomUt, mtp, consta, Proposition, prix, acompte, accord, client_id, resultat, date_depot) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+    const dateDepot = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-  db.query(
-    sql,
-    [
+    const sql = `
+      INSERT INTO appareils (num_suivi, letype, lamarque, lemodele, autre_appareil, letat, serie_imei, nomut, mtp, consta, proposition, prix, acompte, accord, client_id, resultat, date_depot) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      RETURNING id
+    `;
+
+    const result = await pool.query(sql, [
       appareilData.num_suivi,
       appareilData.letype,
       marque,
       modele,
+      appareilData.autre_appareil,
       appareilData.letat,
       appareilData.serie_imei,
       appareilData.nomUt,
       appareilData.mtp,
       appareilData.consta,
-      appareilData.Proposition,
+      appareilData.proposition,
       appareilData.prix,
       appareilData.acompte,
       appareilData.accord,
       appareilData.client_id,
       appareilData.resultat,
       dateDepot,
-    ],
-    (err, result) => {
-      if (err) {
-        console.error("Erreur lors de l'insertion:", err);
-        return res.status(500).json({ error: "Erreur lors de l'insertion des données" });
-      }
+    ]);
 
-      res.status(201).json({
-        message: "Appareil ajouté avec succès",
-        appareilId: result.insertId,
-      });
-    }
-  );
+    res.status(201).json({
+      message: "Appareil ajouté avec succès",
+      appareilId: result.rows[0].id,
+    });
+  } catch (err) {
+    console.error("Erreur lors de l'insertion:", err);
+    return res.status(500).json({ error: "Erreur lors de l'insertion des données" });
+  }
 });
 
 // Route pour gérer l'ajout d'un nouveau client
@@ -103,7 +104,8 @@ app.post("/nouveauClient", (req, res) => {
 
   const insertClientQuery = `
     INSERT INTO client (civilite, nom, prenom, identifiant, telephone, email, note_client, note_interne) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING id
   `;
 
   const clientValues = [
@@ -117,7 +119,7 @@ app.post("/nouveauClient", (req, res) => {
     noteInterne,
   ];
 
-  db.query(insertClientQuery, clientValues, (err, result) => {
+  pool.query(insertClientQuery, clientValues, (err, result) => {
     if (err) {
       console.error("Erreur lors de l'insertion des données client :", err);
       return res.status(500).json({ error: "Erreur lors de l'insertion des données client" });
@@ -126,7 +128,7 @@ app.post("/nouveauClient", (req, res) => {
     // Renvoyer l'ID du client nouvellement créé
     res.json({
       message: "Client ajouté avec succès",
-      clientId: result.insertId,
+      clientId: result.rows[0].id,
     });
   });
 });
@@ -135,7 +137,6 @@ app.post("/nouveauClient", (req, res) => {
 app.get("/appareil/:id", (req, res) => {
   const appareilId = req.params.id;
 
-  // Requête SQL avec jointure pour récupérer l'appareil et le client
   const sql = `
     SELECT 
       appareils.*,
@@ -147,37 +148,39 @@ app.get("/appareil/:id", (req, res) => {
     ON 
       appareils.client_id = client.id
     WHERE 
-      appareils.id = ?
+      appareils.id = $1
   `;
 
-  db.query(sql, [appareilId], (err, result) => {
+  pool.query(sql, [appareilId], (err, result) => {
     if (err) {
-      console.error("Erreur lors de la récupération des données :", err.sqlMessage);
+      console.error("Erreur lors de la récupération des données :", err.message);
       return res.status(500).json({ error: "Erreur lors de la récupération des données" });
     }
 
-    if (result.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(404).json({ message: "Appareil non trouvé" });
     }
 
-    res.json(result[0]);
+    res.json(result.rows[0]);
   });
 });
 
 // Route pour mettre à jour le statut du ticket
 app.put('/updateTicketStatus', (req, res) => {
-  const { ticketId, status } = req.body;
+  const { ticketId, status, commentaire } = req.body;
 
-  const sql = 'UPDATE appareils SET resultat = ? WHERE num_suivi = ?';
+  const sql = `
+    UPDATE appareils 
+    SET resultat = $1, commentaire = COALESCE(commentaire || ' | ', '') || $2 
+    WHERE num_suivi = $3
+  `;
 
-  db.query(sql, [status, ticketId], (err, result) => {
+  pool.query(sql, [status, commentaire || '', ticketId], (err) => {
     if (err) {
-      console.error('Erreur lors de la mise à jour du statut:', err);
-      return res.status(500).json({ error: 'Erreur lors de la mise à jour du statut' });
+      console.error('Erreur lors de la mise à jour du statut :', err);
+      return res.status(500).json({ error: 'Erreur lors de la mise à jour du statut.' });
     }
-
-    console.log(`Statut du ticket ${ticketId} mis à jour à ${status}`);
-    res.status(200).json({ message: 'Statut mis à jour avec succès' });
+    res.status(200).json({ message: 'Statut mis à jour avec succès.' });
   });
 });
 
@@ -185,16 +188,15 @@ app.put('/updateTicketStatus', (req, res) => {
 app.post('/recupererTicket/:id', (req, res) => {
   const ticketId = req.params.id;
 
-  // Requête SQL pour mettre à jour le statut du ticket à 'Récupéré'
-  const sql = 'UPDATE appareils SET resultat = ? WHERE id = ?';
+  const sql = 'UPDATE appareils SET resultat = $1 WHERE id = $2';
 
-  db.query(sql, ['Récupéré', ticketId], (err, result) => {
+  pool.query(sql, ['Récupéré', ticketId], (err, result) => {
     if (err) {
       console.error('Erreur lors de la mise à jour du ticket:', err);
       return res.status(500).json({ error: 'Erreur lors de la mise à jour du ticket' });
     }
 
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Ticket non trouvé' });
     }
 
@@ -209,7 +211,7 @@ app.get('/tickets', (req, res) => {
   let sql = `
     SELECT 
       appareils.*, 
-      client.nom, client.prenom, client.telephone 
+      client.nom, client.prenom, client.telephone, appareils.commentaire
     FROM 
       appareils 
     JOIN 
@@ -220,21 +222,20 @@ app.get('/tickets', (req, res) => {
   let params = [];
 
   if (status) {
-    sql += ' WHERE appareils.resultat = ?';
+    sql += ' WHERE appareils.resultat = $1';
     params.push(status);
   }
 
-  db.query(sql, params, (err, results) => {
+  pool.query(sql, params, (err, results) => {
     if (err) {
       console.error('Erreur lors de la récupération des tickets :', err);
       return res.status(500).json({ error: 'Erreur lors de la récupération des tickets' });
     }
-
-    res.json(results);
+    res.json(results.rows);
   });
 });
 
-// Route pour récupérer les tickets terminés
+// Route pour récupérer les tickets terminés (ajout du commentaire)
 app.get('/ticketsTermines', (req, res) => {
   const sql = `
     SELECT 
@@ -242,9 +243,10 @@ app.get('/ticketsTermines', (req, res) => {
       appareils.id,
       appareils.num_suivi,
       appareils.client_id,
-      appareils.lemodele,
-      appareils.Proposition,
+      appareils.letype, appareils.lamarque, appareils.lemodele, appareils.autre_appareil,
+      appareils.proposition,
       appareils.prix,
+      appareils.commentaire,  -- Assurez-vous que cette colonne est incluse
       client.nom, client.prenom, client.telephone 
     FROM 
       appareils 
@@ -256,15 +258,16 @@ app.get('/ticketsTermines', (req, res) => {
       appareils.resultat IN ('Réparé', 'Hors Service')
   `;
 
-  db.query(sql, (err, results) => {
+  pool.query(sql, (err, results) => {
     if (err) {
       console.error('Erreur lors de la récupération des tickets terminés:', err);
       return res.status(500).json({ error: 'Erreur lors de la récupération des tickets terminés' });
     }
 
-    res.json(results);
+    res.json(results.rows);
   });
 });
+
 
 // Route pour récupérer les tickets récupérés
 app.get('/historiqueTickets', (req, res) => {
@@ -272,9 +275,9 @@ app.get('/historiqueTickets', (req, res) => {
     SELECT 
       appareils.date_depot,
       client.nom, client.prenom,
-      appareils.letype, appareils.lamarque, appareils.lemodele,
+      appareils.letype, appareils.lamarque, appareils.lemodele, appareils.autre_appareil,
       appareils.num_suivi,
-      appareils.Proposition,
+      appareils.proposition,
       appareils.prix
     FROM 
       appareils 
@@ -286,13 +289,13 @@ app.get('/historiqueTickets', (req, res) => {
       appareils.resultat = 'Récupéré'
   `;
 
-  db.query(sql, (err, results) => {
+  pool.query(sql, (err, results) => {
     if (err) {
       console.error('Erreur lors de la récupération des tickets récupérés:', err);
       return res.status(500).json({ error: 'Erreur lors de la récupération des tickets récupérés' });
     }
 
-    const formattedResults = results.map(ticket => {
+    const formattedResults = results.rows.map(ticket => {
       if (ticket.date_depot) {
         ticket.date_depot = new Date(ticket.date_depot).toISOString().slice(0, 10);
       }
@@ -303,50 +306,45 @@ app.get('/historiqueTickets', (req, res) => {
   });
 });
 
-//route pour connexion client 
-app.post('/connexionClient', (req, res) => {
+// route pour connexion client 
+app.post('/connexionClient', async (req, res) => {
   const { numeroSuivi, nom } = req.body;
-  const query = `SELECT * FROM client WHERE id = ? OR nom = ?`;
+  const query = `SELECT * FROM client WHERE num_suivi = $1 AND nom = $2`;
 
+  try {
+    const results = await pool.query(query, [numeroSuivi, nom]);
 
-  db.query(query, [numeroSuivi, nom], (err, results) => {
-    if (err) {
-      console.error('Erreur lors de la récupération des données client :', err);
-      return res.status(500).json({ error: 'Erreur lors de la vérification des données client' });
-    }
-
-    if (results.length > 0) {
-      res.json({ message: 'Connexion réussie', client: results[0] });
+    if (results.rows.length > 0) {
+      res.json({ message: 'Connexion réussie', client: results.rows[0] });
     } else {
       res.status(401).json({ message: 'Informations incorrectes' });
     }
-  });
+  } catch (err) {
+    console.error('Erreur lors de la récupération des données client :', err);
+    return res.status(500).json({ error: 'Erreur lors de la vérification des données client' });
+  }
 });
 
-
-// route pour recuperer le client connecter 
-
+// route pour recuperer le client connecté 
 app.get('/client/:id', (req, res) => {
   const clientId = req.params.id;
 
-  const query = `SELECT * FROM client WHERE id = ?`;
+  const query = `SELECT * FROM client WHERE id = $1`;
 
-  db.query(query, [clientId], (err, results) => {
-      if (err) {
-          console.error('Erreur lors de la récupération des données client :', err);
-          return res.status(500).json({ error: 'Erreur lors de la récupération des données client' });
-      }
+  pool.query(query, [clientId], (err, results) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des données client :', err);
+      return res.status(500).json({ error: 'Erreur lors de la récupération des données client' });
+    }
 
-      if (results.length > 0) {
-          res.json(results[0]);
-      } else {
-          res.status(404).json({ message: 'Client non trouvé' });
-      }
+    if (results.rows.length > 0) {
+      res.json(results.rows[0]);
+    } else {
+      res.status(404).json({ message: 'Client non trouvé' });
+    }
   });
 });
 
-
-// route pour affichage tableau 
 app.get('/repairList/:clientId', (req, res) => {
   const clientId = req.params.clientId;
 
@@ -354,60 +352,81 @@ app.get('/repairList/:clientId', (req, res) => {
       SELECT 
           appareils.num_suivi, 
           appareils.date_depot, 
-          appareils.lemodele, 
+          appareils.letype, appareils.lamarque, appareils.lemodele, appareils.autre_appareil,
           appareils.prix, 
-          appareils.resultat
-          
+          appareils.resultat,
+          appareils.proposition
       FROM 
           appareils
       WHERE 
-          appareils.client_id = ?
+          appareils.client_id = $1
   `;
 
-  db.query(query, [clientId], (err, results) => {
-      if (err) {
-          console.error('Erreur lors de la récupération des réparations :', err);
-          return res.status(500).json({ error: 'Erreur lors de la récupération des réparations.' });
-      }
+  pool.query(query, [clientId], (err, results) => {
+    if (err) {
+      console.error('Erreur lors de la récupération des réparations :', err);
+      return res.status(500).json({ error: 'Erreur lors de la récupération des réparations.' });
+    }
 
-      res.json(results);
+    res.json(results.rows);
   });
 });
 
+app.post('/ajouterCommentaire', (req, res) => {
+  const { ticketId, commentaire } = req.body;
 
-// Démarrer le serveur Express
-// app.listen(3000, () => {
-//   console.log("Serveur démarré sur le port 3000");
-// });
-
-
-// Use PORT provided in environment or default to 3000
-// const port = process.env.PORT || 3000;
-
-// // Listen on port and 0.0.0.0
-// app.listen(port, "0.0.0.0", function () {
-//   // ...
-
-// Connexion à la base de données
-
-// Route de test
-app.get('/', (req, res) => {
-  res.send('Application en ligne !');
+  const sql = `INSERT INTO commentaires (ticket_id, commentaire) VALUES ($1, $2) RETURNING *`;
+  pool.query(sql, [ticketId, commentaire], (err, result) => {
+    if (err) {
+      console.error("Erreur lors de l'insertion :", err);
+      return res.status(500).json({ error: "Erreur lors de l'insertion du commentaire" });
+    }
+    res.json({ message: "Commentaire ajouté", commentaire: result.rows[0] });
+  });
 });
 
-// Gestion des erreurs
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Erreur serveur !');
+app.get('/commentaires/:ticketId', (req, res) => {
+  const { ticketId } = req.params;
+
+  const sql = `SELECT commentaire FROM appareils WHERE num_suivi = $1`;
+  pool.query(sql, [ticketId], (err, result) => {
+    if (err) {
+      console.error("Erreur lors de la récupération des commentaires :", err);
+      return res.status(500).json({ error: "Erreur lors de la récupération des commentaires" });
+    }
+    res.json(result.rows);
+  });
 });
 
-// Démarrage du serveur
-const port = process.env.PORT || 3000;
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Serveur démarré sur le port ${port}`);
+// route pour affichage tableau
+app.get('/', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM clients');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Erreur du serveur');
+  }
 });
 
-// Gestion des erreurs non capturées
-process.on('uncaughtException', (err) => {
-  console.error('Erreur non capturée:', err);
+app.put('/modifierTicket', (req, res) => {
+  const { ticketId, commentaire } = req.body;
+
+  const sql = `
+    UPDATE appareils
+    SET commentaire = $1
+    WHERE num_suivi = $2
+  `;
+
+  pool.query(sql, [commentaire, ticketId], (err) => {
+    if (err) {
+      console.error('Erreur lors de la mise à jour du ticket :', err);
+      return res.status(500).json({ error: 'Mise à jour impossible.' });
+    }
+    res.status(200).json({ message: 'Ticket mis à jour avec succès.' });
+  });
+});
+
+app.listen(3000, () => {
+  console.log('Serveur démarré sur le port 3000');
 });

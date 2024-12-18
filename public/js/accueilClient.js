@@ -1,41 +1,36 @@
-document.querySelector('form').addEventListener('submit', function (e) {
-    e.preventDefault();
-  
-    const inputSuivi = document.getElementById('numeroSuivi').value;
-    const inputNom = document.getElementById('nom').value;
-    // const inputEmail = document.getElementById('email').value;
-  
-    fetch('http://localhost:3000/connexionClient', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({numeroSuivi: inputSuivi, nom: inputNom })
-    })
-    
-      .then(response => response.json())
-      .then(data => {
-        
-        // if (data.message === 'Connexion réussie') {
-        //   alert('Connexion réussie. Vous pouvez maintenant suivre votre réparation.');
-        //   window.location.assign('espaceClient.html');
-        // } else {
-        //   alert('Informations incorrectes. Veuillez réessayer.');
-        // }
-  
-        if (data.message === 'Connexion réussie') {
-          // Stocker l'ID du client et les données dans le localStorage
-          localStorage.setItem("clientID", data.client.id);
-          localStorage.setItem("dataClient", JSON.stringify(data.client));
-          
-          // Rediriger vers l'espace client
-          window.location.assign('espaceClient.html');
-      } else {
-          alert('Informations incorrectes. Veuillez réessayer.');
-      }
-      })
-  
-      .catch(error => {
-        console.error('Erreur lors de la connexion :', error);
-        window.location.href = 'index.html';  // Redirection si les données sont absentes
-        alert('Une erreur est survenue lors de la connexion.');
-      });
-  });
+// Initialiser Supabase
+const supabaseUrl = 'https://xyzcompany.supabase.co';
+const supabaseKey = 'public-anonymous-key';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+
+document.querySelector('form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const inputSuivi = document.getElementById('numeroSuivi').value.trim();
+  const inputNom = document.getElementById('nom').value.trim();
+
+  // Vérifier que les champs ne sont pas vides
+  if (!inputSuivi || !inputNom) {
+    alert('Veuillez remplir tous les champs.');
+    return;
+  }
+
+  try {
+    let { data: clientInfo, error } = await supabase
+      .rpc('get_client_info', { tracking_number: inputSuivi, client_name: inputNom });
+
+    if (error || !clientInfo || clientInfo.length === 0) {
+      console.error('Erreur lors de la connexion :', error);
+      alert('Informations incorrectes. Veuillez réessayer.');
+    } else {
+      // Connexion réussie
+      localStorage.setItem('dataClient', JSON.stringify(clientInfo[0]));
+      console.log('Données du client stockées, redirection vers espaceClient.html');
+      window.location.assign('espaceClient.html');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la connexion :', error);
+    alert('Une erreur est survenue lors de la connexion.');
+  }
+});

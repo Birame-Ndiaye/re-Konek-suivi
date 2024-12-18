@@ -132,17 +132,17 @@ button{
 
 @media only screen and (max-width: 767px) {
     form {
-        width: 90%;  /* Utilisation de pourcentages pour l'adaptation */
+        width: 90%;  
         height: auto;
         padding: 20px;
     }
 
     .background {
-        display: none; /* Supprimer les décorations encombrantes sur mobile */
+        display: none; 
     }
 
     input {
-        height: 40px; /* Réduction de la taille des champs d’entrée */
+        height: 40px;
         font-size: 14px;
     }
 
@@ -152,12 +152,12 @@ button{
     }
 
     .social {
-        flex-direction: column; /* Réorganisation en colonne */
+        flex-direction: column;
         align-items: center;
     }
 
     .social div {
-        width: 100%;  /* Pleine largeur sur mobile */
+        width: 100%;
         margin-bottom: 10px;
     }
 }

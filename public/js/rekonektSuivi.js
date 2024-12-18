@@ -45,8 +45,10 @@ $(document).ready(function () {
         console.log('Sending data:', formData);
 
         // Envoyer les données au serveur
+        const BACKEND_URL_AjoutClient = 'http://localhost:8081/addClient';
+
         $.ajax({
-            url: 'http://localhost:8081/addClient',
+            url: BACKEND_URL_AjoutClient,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(formData),
@@ -59,13 +61,14 @@ $(document).ready(function () {
                 // Rediriger vers la page des réparations en cours
                 window.location.href = 'reparationsEnCours.html?num_suivi=' + formData.num_suivi;
             },
-            error: function (xhr, status, error) {
+            error: function (_xhr, _status, error) {
                 console.error('Erreur lors de l\'envoi des données:', error);
                 alert('Une erreur est survenue lors de l\'envoi des données.');
             }
         });
     });
 
+  
     // Gestion du menu burger (un seul bouton)
    // Gestion du menu burger
    $('#burgerMenu').click(function () {
